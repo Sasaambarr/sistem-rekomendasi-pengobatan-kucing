@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+
+    background-image:url("/static/img/bg.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* Container utama */
+.wrapper{
+    width:85%;
+    max-width:1000px;
+
+    background:rgba(255,255,255,0.25);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    padding:30px;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+
+    box-sizing:border-box;
+}
+
+/* Container Judul */
+.header-box{
+    width:90%;
+
+    margin:0 auto 25px auto;
+
+    background:white;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    text-align:center;
+
+    box-sizing:border-box;
+}
+
+.header-box h1{
+    margin:0;
+    color:black;
+    font-size:30px;
+}
+
+/* Container Login */
+.login-box{
+    width:90%;
+
+    margin:auto;
+
+    background:white;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    padding:35px;
+
+    box-sizing:border-box;
+}
+
+.login-box h2{
+    text-align:center;
+    margin-top:0;
+    margin-bottom:30px;
+}
+
+/* Form di tengah */
+.form-container{
+    width:fit-content;
+    margin:0 auto;
+}
+
+.form-row{
+    display:flex;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.form-row label{
+    width:100px;
+    text-align:left;
+    font-weight:bold;
+}
+
+.form-row span{
+    width:20px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.form-row input{
+    width:220px;
+    padding:10px;
+
+    border:1px solid #ccc;
+    border-radius:8px;
+
+    box-sizing:border-box;
+}
+
+/* Tombol Login */
+.btn-login{
+    width:220px;
+
+    display:block;
+
+    margin:25px auto 0 auto;
+
+    padding:12px;
+
+    background:#667eea;
+    color:white;
+
+    border:none;
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:16px;
+}
+
+.btn-login:hover{
+    background:#5a67d8;
+}
+
+#msg{
+    text-align:center;
+    color:red;
+    margin-top:15px;
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+    .wrapper{
+        width:95%;
+    }
+
+    .header-box,
+    .login-box{
+        width:100%;
+    }
+
+    .header-box h1{
+        font-size:22px;
+    }
+
+    .form-container{
+        width:100%;
+    }
+
+    .form-row{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .form-row label,
+    .form-row span{
+        width:auto;
+        margin-bottom:5px;
+    }
+
+    .form-row input{
+        width:100%;
+    }
+
+    .btn-login{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- Judul -->
+    <div class="header-box">
+        <h1>Sistem Rekomendasi Obat Pada Penyakit Kucing</h1>
+    </div>
+
+    <!-- Login -->
+    <div class="login-box">
+
+        <h2>Login</h2>
+
+        <div class="form-container">
+
+            <div class="form-row">
+                <label>Username</label>
+                <span>:</span>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Masukkan username">
+            </div>
+
+            <div class="form-row">
+                <label>Password</label>
+                <span>:</span>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Masukkan password">
+            </div>
+
+        </div>
+
+        <button
+            class="btn-login"
+            onclick="login()">
+            Login
+        </button>
+
+        <p id="msg"></p>
+
+    </div>
+
+</div>
+
+<script>
+async function login(){
+
+    let username =
+        document.getElementById("username").value;
+
+    let password =
+        document.getElementById("password").value;
+
+    try{
+
+        let res = await fetch("/login",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            credentials:"include",
+            body:JSON.stringify({
+                username,
+                password
+            })
+        });
+
+        let data = await res.json();
+
+        if(data.status === "success"){
+
+            if(data.role === "admin"){
+                window.location.href = "/index";
+            }else{
+                window.location.href = "/form_pasien";
+            }
+
+        }else{
+
+            document.getElementById("msg").innerText =
+                "Username atau password salah!";
+
+        }
+
+    }catch(err){
+
+        alert("Backend tidak terhubung!");
+
+    }
+}
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Diagnosa</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- 🔥 LOGOUT DI LUAR -->
+<div class="logout-wrapper">
+  <button class="logout" onclick="logout()">
+    <i class="fa-solid fa-right-from-bracket"></i>
+  </button>
+</div>
+
+<!-- 🔥 CARD UTAMA -->
+<div class="container">
+
+  <div class="title">🐱 Sistem Rekomendasi Obat Pada Penyakit Kucing</div>
+  <div class="subtitle">Pilih "Ya" jika kucing mengalami gejala</div>
+
+  <div id="gejala-container"></div>
+
+  <div class="nav">
+    <button class="prev" onclick="prevPage()">Sebelumnya</button>
+    <button class="next" onclick="nextPage()">Selanjutnya</button>
+  </div>
+
+  <div class="action">
+    <button class="reset" onclick="resetForm()">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+
+    <button class="predict" onclick="predict()">
+      Diagnosa
+    </button>
+  </div>
+
+  <div id="result" class="result"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<h2>Data Pasien</h2>
+<div id="list-pasien"></div>
+<script>
+async function loadPasien() {
+  let res = await fetch("/get_pasien");
+  let data = await res.json();
+
+  let container = document.getElementById("list-pasien");
+  container.innerHTML = "";
+
+  data.forEach(p => {
+    container.innerHTML += `
+      <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <b>${p.nama_kucing}</b> (${p.jenis}) <br>
+        Pemilik: ${p.nama_pemilik} <br>
+        Umur: ${p.umur} bulan <br><br>
+
+        <button onclick="diagnosa(${p.id})">Diagnosa</button>
+      </div>
+    `;
+  });
+  tabel.innerHTML += `
+  <tr>
+    <td>${i+1}</td>
+    <td>${item.nama_kucing}</td>
+    <td>${item.nama_pemilik}</td>
+    <td>${item.penyakit ? item.penyakit : 'Belum didiagnosa'}</td>
+    <td>${item.obat ? item.obat : '-'}</td>
+    <td>${item.tanggal ? item.tanggal : '-'}</td>
+  </tr>
+`;
+}
+
+function diagnosa(id) {
+  localStorage.setItem("pasien_id", id);
+  window.location.href = "/index";
+}
+
+loadPasien();
+</script>

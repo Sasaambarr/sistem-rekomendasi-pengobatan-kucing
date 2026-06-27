@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Hasil Diagnosa</title>
+
+<style>
+body {
+  font-family: "Times New Roman";
+  margin: 0;
+}
+
+.wrapper {
+  width: 190mm;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  page-break-inside: auto;
+}
+
+td {
+  word-break: break-word;
+}
+
+td:first-child, th:first-child {
+  text-align: center;
+  width: 50px;
+}
+
+th {
+  text-align: center;
+  border: 1px solid black;
+  padding: 6px;
+}
+
+td {
+  border: 1px solid black;
+  padding: 6px;
+}
+
+.section-title {
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.result-box {
+  border: 1px solid black;
+  padding: 10px;
+  page-break-inside: avoid;
+}
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.no-print {
+  display: block;
+}
+
+/* 🔥 MULTI HALAMAN */
+tr {
+  page-break-inside: auto;
+}
+
+thead {
+  display: table-header-group;
+}
+
+#kesimpulan {
+  page-break-inside: avoid;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<h1>HASIL KONSULTASI</h1>
+
+<div class="section-title">Gejala Terpilih</div>
+<table id="tabel-gejala">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Nama Gejala</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="section-title">Hasil Diagnosa</div>
+<div class="result-box">
+  <p><b>Penyakit:</b> <span id="penyakit"></span></p>
+  <p><b>Obat:</b> <span id="obat"></span></p>
+</div>
+
+<div class="section-title">Probabilitas Penyakit</div>
+<table id="tabel-prob">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Penyakit</th>
+      <th>Probabilitas</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="section-title">Kesimpulan</div>
+<p id="kesimpulan"></p>
+
+<br>
+
+<button class="no-print" onclick="downloadPDF()">📄 PDF</button>
+<button class="no-print" onclick="kembali()">🔄 Mulai Ulang</button>
+
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("hasil"));
+
+if (!data) {
+  alert("Tidak ada data");
+  window.location.href = "index.html";
+}
+
+document.getElementById("penyakit").innerText = data.penyakit;
+document.getElementById("obat").innerText = data.obat;
+
+// 🔥 TABEL GEJALA
+let tabel = document.querySelector("#tabel-gejala tbody");
+data.gejala.forEach((g,i)=>{
+  tabel.innerHTML += `
+    <tr>
+      <td>${i+1}</td>
+      <td>${g}</td>
+    </tr>
+  `;
+});
+
+// 🔥 TABEL PROBABILITAS
+let tabelProb = document.querySelector("#tabel-prob tbody");
+
+if (data.top3 && data.top3.length > 0) {
+  data.top3.forEach((item,i)=>{
+    tabelProb.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${item.penyakit}</td>
+        <td>${item.persen}%</td>
+      </tr>
+    `;
+  });
+} else {
+  tabelProb.innerHTML += `
+    <tr>
+      <td colspan="3" style="text-align:center;">
+        Tidak tersedia
+      </td>
+    </tr>
+  `;
+}
+
+// 🔥 KESIMPULAN
+document.getElementById("kesimpulan").innerHTML =
+  `Berdasarkan gejala yang dipilih, sistem mendiagnosa bahwa kucing mengalami 
+  <b>${data.penyakit}</b> dan disarankan menggunakan obat 
+  <b>${data.obat}</b>.`;
+
+function kembali() {
+  localStorage.removeItem("hasil");
+  localStorage.removeItem("pasien_id"); // 🔥 penting
+  window.location.href = "/index"; // 🔥 pakai route Flask
+}
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function downloadPDF() {
+  let element = document.querySelector(".wrapper");
+
+  let opt = {
+    margin: [10, 10, 10, 10], // 🔥 lebih aman untuk A4
+    filename: 'hasil-diagnosa.pdf',
+
+    html2canvas: {
+      scale: 1,            // 🔥 WAJIB (jangan 2)
+      useCORS: true,
+      scrollY: 0
+    },
+
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    },
+
+    // 🔥 INI KUNCI MULTI HALAMAN
+    pagebreak: {
+      mode: ['avoid-all', 'css', 'legacy']
+    }
+  };
+
+  document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+
+  setTimeout(() => {
+    html2pdf().set(opt).from(element).save().then(() => {
+      document.querySelectorAll('.no-print').forEach(el => el.style.display = 'block');
+    });
+  }, 500);
+}
+
+// 🔥 DATA PASIEN + TANGGAL
+let pasien_id = localStorage.getItem("pasien_id");
+
+async function loadPasien() {
+  if (!pasien_id) return;
+
+  let res = await fetch("/get_pasien_by_id/" + pasien_id);
+  let pasien = await res.json();
+
+  let hasil = JSON.parse(localStorage.getItem("hasil"));
+
+  let htmlPasien = `
+    <p><b>Nama Pemilik:</b> ${pasien.nama_pemilik}</p>
+    <p><b>Nama Kucing:</b> ${pasien.nama_kucing}</p>
+    <p><b>Jenis:</b> ${pasien.jenis}</p>
+    <p><b>Umur:</b> ${pasien.umur} bulan</p>
+    <p><b>Tanggal Konsultasi:</b> ${formatTanggal(hasil?.tanggal)}</p>
+  `;
+
+  let wrapper = document.querySelector(".wrapper");
+
+  let judul = wrapper.querySelector("h1").outerHTML;
+  wrapper.querySelector("h1").remove();
+
+  wrapper.innerHTML = judul + htmlPasien + wrapper.innerHTML;
+}
+
+function formatTanggal(tglISO) {
+  if (!tglISO) return "-";
+
+  let d = new Date(tglISO);
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  }) + " " + d.toLocaleTimeString("id-ID");
+}
+
+
+
+loadPasien();
+</script>
+
+</body>
+</html>
