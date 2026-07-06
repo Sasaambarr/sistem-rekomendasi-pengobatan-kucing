@@ -4,12 +4,14 @@ from datetime import datetime
 import pytz
 import joblib
 import mysql.connector
+import os
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",   # sesuaikan
-    database="diagnosa_kucing"
+    host=os.getenv("MYSQLHOST"),
+    user=os.getenv("MYSQLUSER"),
+    password=os.getenv("MYSQLPASSWORD"),
+    database=os.getenv("MYSQLDATABASE"),
+    port=int(os.getenv("MYSQLPORT"))
 )
 
 app = Flask(__name__)
