@@ -154,23 +154,33 @@ async function simpanPasien() {
       alamat: document.getElementById("alamat").value
     };
 
-    console.log("Data:", data);
-
     let res = await fetch("/tambah_pasien", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify(data)
     });
 
     console.log("Status:", res.status);
 
-    let hasil = await res.text();
+    let hasil = await res.json();
     console.log("Response:", hasil);
 
+    if (hasil.status === "success") {
+      alert("Data berhasil disimpan!");
+
+      localStorage.setItem("pasien_id", hasil.id);
+
+      // pindah ke login
+      location.href = "/";
+    } else {
+      alert("Gagal menyimpan!");
+    }
+
   } catch (e) {
-    console.error(e);
+    console.log(e);
     alert(e);
   }
 }
