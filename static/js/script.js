@@ -143,12 +143,6 @@ async function loadPasien() {
       `Pasien: ${data.nama_kucing} (${data.jenis}) - Pemilik: ${data.nama_pemilik}`;
   }
 }
-
 // jalankan saat halaman dibuka
-function render() {
-    let container = document.getElementById("gejala-container");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-}
+loadGejala();
+loadPasien();
