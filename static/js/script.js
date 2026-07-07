@@ -101,19 +101,23 @@ async function predict() {
   localStorage.setItem("hasil", JSON.stringify(hasil));
 
   // simpan ke database
-  let pasien_id = localStorage.getItem("pasien_id");
+// Ambil pasien terakhir dari database
+  let resPasien = await fetch("/get_pasien_terakhir");
+  let pasien = await resPasien.json();
 
-  if (pasien_id) {
-    await fetch("/simpan_riwayat", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        pasien_id: pasien_id,
-        penyakit: data.penyakit,
-        obat: data.obat,
-        tanggal: tanggal
-      })
-    });
+  if (pasien && pasien.id) {
+      await fetch("/simpan_riwayat", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+              pasien_id: pasien.id,
+              penyakit: data.penyakit,
+              obat: data.obat,
+              tanggal: tanggal
+          })
+      });
   }
 
   // pindah ke halaman hasil
