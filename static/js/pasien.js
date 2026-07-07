@@ -6,12 +6,17 @@ async function simpanPasien() {
     umur: document.getElementById("umur").value
   };
 
-  await fetch("/pasien", {
+  let res = await fetch("/pasien", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     credentials: "include",
     body: JSON.stringify(data)
   });
+
+  let hasil = await res.json();
+
+  // simpan ID pasien yang baru dibuat
+  localStorage.setItem("pasien_id", hasil.id);
 
   window.location.href = "/";
 }

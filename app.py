@@ -197,14 +197,20 @@ def get_riwayat():
     cursor = db.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT pasien.id, pasien.nama_kucing, pasien.nama_pemilik, pasien.jenis,
-               riwayat.penyakit, riwayat.obat, riwayat.tanggal
+        SELECT pasien.id,
+               pasien.nama_kucing,
+               pasien.nama_pemilik,
+               pasien.jenis,
+               diagnosa.penyakit,
+               diagnosa.obat,
+               diagnosa.tanggal
         FROM pasien
-        LEFT JOIN riwayat ON pasien.id = riwayat.pasien_id
+        LEFT JOIN diagnosa ON pasien.id = diagnosa.pasien_id
         ORDER BY pasien.id DESC
     """)
 
     data = cursor.fetchall()
+
     db.close()
     return jsonify(data)
 
