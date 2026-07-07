@@ -146,30 +146,34 @@ body {
 
 <script>
 async function simpanPasien() {
-  let data = {
-    nama_pemilik: document.getElementById("nama_pemilik").value,
-    nama_kucing: document.getElementById("nama_kucing").value,
-    jenis: document.getElementById("jenis").value,
-    umur: document.getElementById("umur").value,
-    alamat: document.getElementById("alamat").value
-  };
+  try {
+    let data = {
+      nama_pemilik: document.getElementById("nama_pemilik").value,
+      nama_kucing: document.getElementById("nama_kucing").value,
+      jenis: document.getElementById("jenis").value,
+      umur: document.getElementById("umur").value,
+      alamat: document.getElementById("alamat").value
+    };
 
-  let res = await fetch("/tambah_pasien", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(data)
-  });
+    console.log("Data:", data);
 
-  let hasil = await res.json();
+    let res = await fetch("/tambah_pasien", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-  if (hasil.status === "success") {
-    alert("Data berhasil disimpan");
+    console.log("Status:", res.status);
 
-    localStorage.setItem("pasien_id", hasil.id);
+    let hasil = await res.text();
+    console.log("Response:", hasil);
 
-    console.log("Redirect ke login...");
-    window.location.href = "/";
-}
+  } catch (e) {
+    console.error(e);
+    alert(e);
+  }
 }
 </script>
 
