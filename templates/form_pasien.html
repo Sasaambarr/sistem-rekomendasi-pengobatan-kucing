@@ -165,14 +165,11 @@ async function simpanPasien() {
   if (hasil.status === "success") {
     alert("Data berhasil disimpan");
 
-    // 🔥 simpan id ke localStorage
     localStorage.setItem("pasien_id", hasil.id);
 
-    // 🔥 redirect sesuai role kamu
-    window.location.href = "/";  // balik ke login
-  } else {
-    alert("Gagal menyimpan");
-  }
+    console.log("Redirect ke login...");
+    window.location.href = "/";
+}
 }
 </script>
 

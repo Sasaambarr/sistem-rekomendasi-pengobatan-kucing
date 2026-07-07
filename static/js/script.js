@@ -145,5 +145,10 @@ async function loadPasien() {
 }
 
 // jalankan saat halaman dibuka
-loadGejala();
-loadPasien();
+function render() {
+    let container = document.getElementById("gejala-container");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+}
