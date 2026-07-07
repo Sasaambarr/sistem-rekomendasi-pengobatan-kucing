@@ -19,17 +19,15 @@ async function loadPasien() {
       </div>
     `;
   });
-  tabel.innerHTML += `
-  <tr>
-    <td>${i+1}</td>
-    <td>${item.nama_kucing}</td>
-    <td>${item.nama_pemilik}</td>
-    <td>${item.penyakit ? item.penyakit : 'Belum didiagnosa'}</td>
-    <td>${item.obat ? item.obat : '-'}</td>
-    <td>${item.tanggal ? item.tanggal : '-'}</td>
-  </tr>
-`;
 }
+
+function diagnosa(id) {
+  localStorage.setItem("pasien_id", id);
+  console.log("pasien dipilih:", id);
+  window.location.href = "/index";
+}
+
+loadPasien();
 
 function diagnosa(id) {
   localStorage.setItem("pasien_id", id);
