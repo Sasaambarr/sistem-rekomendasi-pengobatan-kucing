@@ -186,6 +186,21 @@ def get_pasien_by_id(id):
     db.close()
     return jsonify(data)
 
+@app.route("/get_pasien_terakhir")
+def get_pasien_terakhir():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT * FROM pasien
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+
+    pasien = cursor.fetchone()
+
+    db.close()
+    return jsonify(pasien)
 
 # =========================
 # RIWAYAT
