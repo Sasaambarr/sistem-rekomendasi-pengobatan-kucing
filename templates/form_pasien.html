@@ -184,6 +184,21 @@ async function simpanPasien() {
     alert(e);
   }
 }
+function logout() {
+    localStorage.removeItem("pasien_id");
+
+    fetch("/logout", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(() => {
+        window.location.href = "/";
+    })
+    .catch((err) => {
+        console.error(err);
+        window.location.href = "/";
+    });
+}
 </script>
 
 </body>
